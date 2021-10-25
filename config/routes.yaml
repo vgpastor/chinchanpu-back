@@ -1,3 +1,9 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+generate:
+    path: /generate
+    controller: App\Controller\MainController::generate
+    methods: ['POST']
+
+history:
+  path: /history
+  controller: App\Controller\MainController::history
+  methods: ['GET']
