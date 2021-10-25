@@ -13,7 +13,7 @@ final class ResultRepository
 
     private SessionInterface $session;
 
-    private const NAME_STORAGE = "data_results2";
+    public const NAME_STORAGE = "data_results2";
 
     public function __construct(SessionInterface $session)
     {
@@ -40,7 +40,7 @@ final class ResultRepository
      * @return array|mixed
      */
     public function getLast(int $number=10){
-        return array_slice($this->session->get(self::NAME_STORAGE), (int)("-".$number));
+        return array_slice($this->values, (int)("-".$number));
     }
 
     public function clean():bool{
