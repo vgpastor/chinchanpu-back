@@ -14,7 +14,7 @@ final class GenerateRandomChoice
     public function generate(): string
     {
         $options = Result::OPTIONS;
-        array_shift($options);
+        shuffle($options);
         return array_pop($options);
     }
 }

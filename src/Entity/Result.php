@@ -9,13 +9,13 @@ use Exception;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-final class Result implements \Serializable
+final class Result
 {
 
-    CONST OPTION_SCISSORS = 'scissors';
-    CONST OPTION_PAPER = 'paper';
-    CONST OPTION_ROCK = 'rock';
-    CONST OPTIONS = [self::OPTION_PAPER,self::OPTION_ROCK,self::OPTION_SCISSORS];
+    public CONST OPTION_SCISSORS = 'scissors';
+    public CONST OPTION_PAPER = 'paper';
+    public CONST OPTION_ROCK = 'rock';
+    public CONST OPTIONS = [self::OPTION_PAPER,self::OPTION_ROCK,self::OPTION_SCISSORS];
 
     private UuidInterface $uid;
 
@@ -33,10 +33,10 @@ final class Result implements \Serializable
      */
     public function __construct($player, $enemy)
     {
-        if(!in_array($player,self::OPTIONS)){
+        if(!in_array($player, self::OPTIONS, true)){
             throw new ChoiceException($player." Player selection it's not allowed");
         }
-        if(!in_array($enemy,self::OPTIONS)){
+        if(!in_array($enemy, self::OPTIONS, true)){
             throw new ChoiceException($enemy." Enemy selection it's not allowed");
         }
         $this->player = $player;
@@ -87,7 +87,7 @@ final class Result implements \Serializable
         return $this->uid;
     }
 
-    public function toArray(){
+    public function toArray(): array{
         return[
             'uid'=>$this->uid->toString(),
             'dateOfGame'=>$this->dateOfGame->getTimestamp(),
@@ -95,28 +95,5 @@ final class Result implements \Serializable
             'player'=>$this->player,
             'winner'=>$this->winner
         ];
-    }
-
-    public function serialize(): ?string
-    {
-        return serialize(
-            [
-                $this->uid->toString(),
-                $this->dateOfGame->getTimestamp(),
-                $this->enemy,
-                $this->player,
-                $this->winner
-            ]
-        );
-    }
-
-    public function unserialize($serialized)
-    {
-        $data = unserialize($serialized);
-        $this->uid = Uuid::fromString($data[0]);
-        $this->dateOfGame = new \DateTime($data[1]);
-        $this->enemy = $data[2];
-        $this->player = $data[3];
-        $this->winner = $data[4];
     }
 }

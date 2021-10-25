@@ -16,20 +16,31 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class MainController extends AbstractController
 {
 
-    public function generate(Request $request,ResultRepository $resultRepository, GenerateRandomChoice $generateRandomChoice ): JsonResponse
+    public function generate(Request $request, ResultRepository $resultRepository, GenerateRandomChoice $generateRandomChoice): JsonResponse
     {
         $enemy = $generateRandomChoice->generate();
         try {
             $result = new Result($request->get('player'), $enemy);
             $resultRepository->save($result);
-            return new JsonResponse($result->toArray());
+            return new JsonResponse($result->toArray(),Response::HTTP_CREATED);
         } catch (ChoiceException | NotDefinedException $e) {
-            return new JsonResponse($e->getMessage(),Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(["error"=>$e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
     public function history(ResultRepository $resultRepository): JsonResponse
     {
-        return new JsonResponse($resultRepository->getLast());
+        $results = $resultRepository->getLast();
+        $response = [];
+        foreach ($results as $result) {
+            $response[] = $result->toArray();
+        }
+        return new JsonResponse($response);
+    }
+
+    public function clean(ResultRepository $resultRepository): JsonResponse
+    {
+        $resultRepository->clean();
+        return new JsonResponse(null,Response::HTTP_ACCEPTED);
     }
 }

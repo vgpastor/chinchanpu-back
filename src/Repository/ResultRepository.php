@@ -13,42 +13,40 @@ final class ResultRepository
 
     private SessionInterface $session;
 
+    private const NAME_STORAGE = "data_results2";
+
     public function __construct(SessionInterface $session)
     {
         $this->session = $session;
-        $this->values = $session->get('data_results');
+        $this->values = $session->get(self::NAME_STORAGE);
         if(is_null($this->values)){
             $this->values = [];
         }
     }
 
     public function save(Result $result){
-        $key = array_search((string)$result->getUid(), array_column($this->values, 'uid'));
+        $key = array_search((string)$result->getUid(), array_column($this->values, 'uid'), true);
         if($key){
             $this->values[$key]=$result;
         }else{
             $this->values[] = $result;
         }
-        $this->session->set('data_results',$this->values);
+        $this->session->set(self::NAME_STORAGE,$this->values);
     }
 
-    public function getLast($number=10){
-        return $this->values;
+    /**
+     * @todo limit number of results
+     * @param int $number
+     * @return array|mixed
+     */
+    public function getLast(int $number=10){
+        return array_slice($this->session->get(self::NAME_STORAGE), (int)("-".$number));
     }
 
-    protected function serialize(Result $result){
-        return json_encode(            [
-                $this->uid->toString(),
-                $this->dateOfGame->getTimestamp(),
-                $this->enemy,
-                $this->player,
-                $this->winner
-            ]
-        )
-    }
-
-    protected function unserialize(array $data){
-        return 
+    public function clean():bool{
+        $this->session->set(self::NAME_STORAGE,[]);
+        $this->values = [];
+        return true;
     }
 
 }

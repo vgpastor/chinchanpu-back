@@ -7,3 +7,8 @@ history:
   path: /history
   controller: App\Controller\MainController::history
   methods: ['GET']
+
+history_clean:
+  path: /history
+  controller: App\Controller\MainController::clean
+  methods: ['DELETE']
