@@ -27,12 +27,12 @@ class GenerateRandomChoiceTest extends TestCase
     public function testAleatory()
     {
         $results = [];
-        for($i=0;$i<1000;$i++){
+        for($i=0;$i<100;$i++){
             $choice = $this->generateRandomChoice->generate();
             @$results[$choice]++;
         }
         foreach ($results as $key=>$value){
-            $this->assertGreaterThan(250,$value,$key." lower than minimum");
+            $this->assertGreaterThan(25,$value,$key." lower than minimum");
         }
     }
 
